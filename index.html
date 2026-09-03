@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ - Không Gian Làm Phim AI</title>
+    <!-- Tích hợp thư viện FontAwesome để sử dụng icon chuyên nghiệp -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #f4f4f9;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 20px;
+            padding: 50px;
+            background: rgba(15, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #4da6ff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #ffcc00;
+            font-size: 1.2em;
+            margin-bottom: 50px;
+        }
+
+        /* Khung Grid chứa 3 nút hover */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        /* Thiết kế khối Hover */
+        .nav-card {
+            background: rgba(77, 166, 255, 0.05);
+            padding: 40px 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(77, 166, 255, 0.2);
+            text-decoration: none;
+            color: #f4f4f9;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .nav-desc {
+            font-size: 0.95em;
+            color: #aaa;
+            max-width: 90%;
+            transition: color 0.3s ease;
+        }
+
+        /* Mũi tên điều hướng ẩn mặc định */
+        .hover-arrow {
+            margin-top: 20px;
+            font-size: 1.5em;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.3s ease;
+        }
+
+        /* --- CÁC HIỆU ỨNG KHI HOVER --- */
+        .nav-card:hover {
+            transform: translateY(-10px);
+            background: rgba(77, 166, 255, 0.12);
+        }
+
+        /* Hiệu ứng mũi tên trượt ra */
+        .nav-card:hover .hover-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Hiệu ứng phóng to icon chính */
+        .nav-card:hover .nav-icon {
+            transform: scale(1.15) translateY(-5px);
+        }
+
+        /* Đổi màu sắc riêng biệt cho từng khối khi hover */
+        .card-study:hover { 
+            border-color: #ffcc00; 
+            box-shadow: 0 10px 30px rgba(255, 204, 0, 0.15); 
+        }
+        .card-study:hover .nav-icon, 
+        .card-study:hover .hover-arrow { color: #ffcc00; }
+        .card-study:hover .nav-desc { color: #fff; }
+
+        .card-docs:hover { 
+            border-color: #4da6ff; 
+            box-shadow: 0 10px 30px rgba(77, 166, 255, 0.15); 
+        }
+        .card-docs:hover .nav-icon, 
+        .card-docs:hover .hover-arrow { color: #4da6ff; }
+        .card-docs:hover .nav-desc { color: #fff; }
+
+        .card-account:hover { 
+            border-color: #ff99cc; 
+            box-shadow: 0 10px 30px rgba(255, 153, 204, 0.15); 
+        }
+        .card-account:hover .nav-icon, 
+        .card-account:hover .hover-arrow { color: #ff99cc; }
+        .card-account:hover .nav-desc { color: #fff; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Học Viện Làm Phim AI</h1>
+    <div class="subtitle">Khám phá sức mạnh của trí tuệ nhân tạo trong điện ảnh</div>
+
+    <!-- Khu vực 3 khối Hover -->
+    <div class="nav-grid">
+        
+        <!-- Khối 1: Học tập -->
+        <a href="hoc-tap.html" class="nav-card card-study">
+            <div class="nav-icon"><i class="fa-solid fa-clapperboard"></i></div>
+            <div class="nav-title">Học Tập</div>
+            <div class="nav-desc">Truy cập lộ trình học, thực hành prompt và quản lý các shot phim.</div>
+            <div class="hover-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        </a>
+
+        <!-- Khối 2: Khoá học - Tài liệu -->
+        <a href="#" class="nav-card card-docs">
+            <div class="nav-icon"><i class="fa-solid fa-book-journal-whills"></i></div>
+            <div class="nav-title">Khoá Học - Tài Liệu</div>
+            <div class="nav-desc">Kho thư viện reference, tài liệu ngầm định và quy tắc dựng cảnh.</div>
+            <div class="hover-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        </a>
+
+        <!-- Khối 3: Tài khoản -->
+        <a href="#" class="nav-card card-account">
+            <div class="nav-icon"><i class="fa-solid fa-user-astronaut"></i></div>
+            <div class="nav-title">Tài Khoản</div>
+            <div class="nav-desc">Quản lý tiến độ cá nhân, bài tập đã nộp và setting mặc định.</div>
+            <div class="hover-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        </a>
+
+    </div>
+</div>
+
+</body>
+</html>

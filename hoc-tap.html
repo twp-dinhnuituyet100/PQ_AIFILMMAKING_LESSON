@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lộ Trình Học Tập Làm Phim AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- THIẾT LẬP CƠ BẢN --- */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #f4f4f9;
+            line-height: 1.6;
+            padding: 30px 2vw; 
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+            background: rgba(12, 12, 18, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 50px 4vw;
+            box-sizing: border-box;
+        }
+
+        /* Ẩn trích dẫn */
+        .hide-cite { display: none; }
+
+        /* --- ĐIỀU HƯỚNG --- */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-btn:hover { background: #fff; color: #000; }
+        
+        .main-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .main-title h1 { color: #fff; font-size: 2.8em; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+        .main-title p { color: #aaa; font-size: 1.1em; margin-top: 10px; }
+
+        /* --- INTRO PANEL (PIPELINE) --- */
+        .intro-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px 35px;
+            margin-bottom: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .intro-panel h3 { color: #ffcc00; margin-top: 0; font-size: 1.2em; text-transform: uppercase; letter-spacing: 1px; }
+        .pipeline-mini { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
+        .p-step { background: rgba(77, 166, 255, 0.1); border: 1px solid rgba(77, 166, 255, 0.2); padding: 8px 15px; border-radius: 8px; font-size: 0.9em; font-weight: 600; color: #d1d5db; display: flex; align-items: center; gap: 8px; }
+        .p-step i { color: #4da6ff; }
+        .p-arrow { color: #555; font-size: 1em; }
+
+        /* --- MODULE TỪNG TUẦN (Không còn đường kẻ) --- */
+        .week-section {
+            margin-bottom: 80px;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        
+        .week-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .week-badge {
+            display: inline-block;
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-weight: 900;
+            font-size: 1.1em;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            color: #000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+        }
+
+        .week-title { 
+            font-size: 2.2em; 
+            color: #fff; 
+            margin: 0; 
+            letter-spacing: 1px;
+        }
+
+        /* --- LƯỚI HOVER CARDS --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .hover-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            text-decoration: none;
+            color: #f4f4f9;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hover-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .card-icon { font-size: 2.5em; margin-bottom: 20px; transition: transform 0.4s ease; }
+        .hover-card:hover .card-icon { transform: scale(1.1) rotate(-5deg); }
+        
+        .card-title { font-size: 1.3em; font-weight: 700; margin: 0 0 12px 0; color: #fff; }
+        .card-desc { font-size: 0.95em; color: #aaa; margin: 0 0 25px 0; flex-grow: 1; line-height: 1.5; }
+        
+        .card-action {
+            font-size: 0.9em; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 8px; transition: gap 0.3s;
+        }
+        .hover-card:hover .card-action { gap: 15px; }
+
+        /* ================= COLOR THEMES ================= */
+        
+        /* TUẦN 1 - 2: Màu Xanh Dương */
+        .theme-blue .week-badge { background: #4da6ff; }
+        .theme-blue .week-section { border-top: 3px solid #4da6ff; }
+        .theme-blue .hover-card:hover { border-color: #4da6ff; }
+        .theme-blue .card-icon, .theme-blue .card-action { color: #4da6ff; }
+
+        /* TUẦN 2-3: Màu Tím */
+        .theme-purple .week-badge { background: #b366ff; }
+        .theme-purple .week-section { border-top: 3px solid #b366ff; }
+        .theme-purple .hover-card:hover { border-color: #b366ff; }
+        .theme-purple .card-icon, .theme-purple .card-action { color: #b366ff; }
+
+        /* TUẦN 3-4: Màu Vàng */
+        .theme-yellow .week-badge { background: #ffcc00; }
+        .theme-yellow .week-section { border-top: 3px solid #ffcc00; }
+        .theme-yellow .hover-card:hover { border-color: #ffcc00; }
+        .theme-yellow .card-icon, .theme-yellow .card-action { color: #ffcc00; }
+
+        /* TUẦN 5-6: Màu Hồng */
+        .theme-pink .week-badge { background: #ff99cc; }
+        .theme-pink .week-section { border-top: 3px solid #ff99cc; }
+        .theme-pink .hover-card:hover { border-color: #ff99cc; }
+        .theme-pink .card-icon, .theme-pink .card-action { color: #ff99cc; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .week-section { padding: 30px 15px; }
+            .card-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- Đầu trang -->
+    <div class="header-top">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Về Trang chủ</a>
+        <div style="color: rgba(255,255,255,0.3); font-weight: bold; letter-spacing: 2px;">WORKSPACE</div>
+    </div>
+
+    <div class="main-title">
+        <h1>Lộ Trình Học Làm Phim AI</h1>
+        <p>Từ nguyên lý tạo ảnh cơ bản đến quy trình dựng phim chuyên nghiệp <span class="hide-cite">[cite: 1]</span></p>
+    </div>
+
+    <!-- INTRO PANEL -->
+    <div class="intro-panel">
+        <h3>Quy Trình Chung (Pipeline) <span class="hide-cite">[cite: 1]</span></h3>
+        <div class="pipeline-mini">
+            <div class="p-step"><i class="fa-regular fa-lightbulb"></i> Ý tưởng</div> <i class="fa-solid fa-angle-right p-arrow"></i>
+            <div class="p-step"><i class="fa-regular fa-image"></i> Tạo ảnh</div> <i class="fa-solid fa-angle-right p-arrow"></i>
+            <div class="p-step"><i class="fa-solid fa-film"></i> Tạo video</div> <i class="fa-solid fa-angle-right p-arrow"></i>
+            <div class="p-step"><i class="fa-solid fa-sliders"></i> Kiểm soát/Ref</div> <i class="fa-solid fa-angle-right p-arrow"></i>
+            <div class="p-step"><i class="fa-solid fa-crosshairs"></i> Chọn shot</div> <i class="fa-solid fa-angle-right p-arrow"></i>
+            <div class="p-step"><i class="fa-solid fa-scissors"></i> Dựng</div> <i class="fa-solid fa-angle-right p-arrow"></i>
+            <div class="p-step"><i class="fa-solid fa-waveform-lines"></i> Âm thanh</div> <i class="fa-solid fa-angle-right p-arrow"></i>
+            <div class="p-step"><i class="fa-solid fa-wand-magic-sparkles"></i> Hoàn thiện</div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         TUẦN 1 - 2: NỀN TẢNG ẢNH
+    =============================================== -->
+    <div class="week-section theme-blue">
+        <div class="week-header">
+            <div class="week-badge">TUẦN 1 - 2</div>
+            <h2 class="week-title">Nền Tảng Tạo Ảnh AI <span class="hide-cite">[cite: 1]</span></h2>
+        </div>
+        
+        <div class="card-grid">
+            <a href="kien-thuc-dien-anh.html" class="hover-card">
+                <i class="fa-solid fa-clapperboard card-icon"></i>
+                <h3 class="card-title">Kiến Thức Điện Ảnh Cơ Bản <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Phân biệt Shot Size (Wide, Medium, Close-up), Camera Angle và hiệu ứng của từng loại Lens <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <a href="thuc-hanh-tao-anh.html" class="hover-card">
+                <i class="fa-solid fa-laptop-code card-icon"></i>
+                <h3 class="card-title">Thực Hành Tạo Ảnh <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Làm quen vòng lặp quan trọng: Yêu cầu → Generate → Quan sát → Sửa lỗi → Generate lại <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào thực hành <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         TUẦN 2-3: NỀN TẢNG VIDEO
+    =============================================== -->
+    <div class="week-section theme-purple">
+        <div class="week-header">
+            <div class="week-badge">TUẦN 2 - 3</div>
+            <h2 class="week-title">Nền Tảng AI Video <span class="hide-cite">[cite: 1]</span></h2>
+        </div>
+        
+        <div class="card-grid">
+            <a href="#" class="hover-card">
+                <i class="fa-solid fa-circle-play card-icon"></i>
+                <h3 class="card-title">Tổng Quan AI Video <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Giới thiệu các hệ thống hiện nay (Omni, Veo, Kling) và thế mạnh công nghệ của từng nền tảng <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <a href="#" class="hover-card">
+                <i class="fa-solid fa-network-wired card-icon"></i>
+                <h3 class="card-title">Phương Thức Tạo Video <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Phân biệt các dạng Text-to-Video, Image-to-Video, Reference-to-Video và Video-to-Video <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <a href="#" class="hover-card">
+                <i class="fa-solid fa-gamepad card-icon"></i>
+                <h3 class="card-title">Điều Khiển Một Shot <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Cấu trúc kiểm soát: Bắt đầu (Start Frame) → Chuyển động (Nhân vật/Camera/Môi trường) → Kết thúc <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <a href="#" class="hover-card">
+                <i class="fa-solid fa-list-check card-icon"></i>
+                <h3 class="card-title">Bài Tập Tạo Video <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Tăng độ khó từ Level 1 (Đứng yên) đến Level 5 (Hai nhân vật tương tác phức tạp) <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào thực hành <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         TUẦN 3-4: KỸ THUẬT NÂNG CAO
+    =============================================== -->
+    <div class="week-section theme-yellow">
+        <div class="week-header">
+            <div class="week-badge">TUẦN 3 - 4</div>
+            <h2 class="week-title">Các Kỹ Thuật Nâng Cao <span class="hide-cite">[cite: 1]</span></h2>
+        </div>
+        
+        <div class="card-grid">
+            <a href="tai-lieu.html" class="hover-card">
+                <i class="fa-solid fa-layer-group card-icon"></i>
+                <h3 class="card-title">Reference Nâng Cao <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Dùng cho Ảnh & Video. Tạo sự đồng nhất (Consistency) qua Character Sheet, Costume Ref, Multiple Angles <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <a href="tai-lieu.html" class="hover-card">
+                <i class="fa-brands fa-unity card-icon"></i>
+                <h3 class="card-title">3D Reference <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Dùng phần mềm 3D như bộ khung xương kiểm soát AI Video: Đặt nhân vật, Camera, Blocking, Animation thô <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <a href="#" class="hover-card">
+                <i class="fa-solid fa-wand-sparkles card-icon"></i>
+                <h3 class="card-title">AI Video Nâng Cao <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Các thủ thuật xử lý sâu: Lip-sync, Face Identity, Fix lỗi/Cleanup, Video Extension và Upscale chất lượng cao <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         TUẦN 5-6: DỰNG & CUT CẢNH
+    =============================================== -->
+    <div class="week-section theme-pink">
+        <div class="week-header">
+            <div class="week-badge">TUẦN 5 - 6</div>
+            <h2 class="week-title">Nguyên Lý Dựng & Cut Cảnh <span class="hide-cite">[cite: 1]</span></h2>
+        </div>
+        
+        <div class="card-grid">
+            <a href="#" class="hover-card">
+                <i class="fa-solid fa-film card-icon"></i>
+                <h3 class="card-title">Chức Năng Từng Shot <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Trước khi nhấn nút Cut, phải hiểu tại sao phải chuyển cảnh (POV, Reaction, Insert, Wide...) <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <a href="#" class="hover-card">
+                <i class="fa-solid fa-arrow-down-short-wide card-icon"></i>
+                <h3 class="card-title">Thứ Tự Shot Kể Chuyện <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Công thức nền tảng: Không gian → Hành động → Cảm xúc (Wide → Medium → Close-up) và ngược lại <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <a href="tai-lieu.html" class="hover-card">
+                <i class="fa-solid fa-scissors card-icon"></i>
+                <h3 class="card-title">Nguyên Lý Dựng Cần Biết <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Quy tắc trục 180 độ, Eyeline Match, Match on Action, Continuity (Đảm bảo sự liên tục hình ảnh) <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào học <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <a href="#" class="hover-card">
+                <i class="fa-solid fa-photo-film card-icon"></i>
+                <h3 class="card-title">Bài Tập Dựng Sequence <span class="hide-cite">[cite: 1]</span></h3>
+                <p class="card-desc">Lắp ráp các shot rời rạc đã Generate thành các Sequence điện ảnh có nghĩa (10-20 giây) <span class="hide-cite">[cite: 1]</span>.</p>
+                <div class="card-action">Vào thực hành <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

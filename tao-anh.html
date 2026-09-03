@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tạo Hình Ảnh Cinematic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- THIẾT LẬP CƠ BẢN --- */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #f4f4f9;
+            line-height: 1.6;
+            padding: 30px 4vw; 
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(15, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 6vw;
+        }
+
+        /* Ẩn trích dẫn */
+        .hide-cite { display: none; }
+
+        /* --- ĐIỀU HƯỚNG --- */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #4da6ff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            background: rgba(77, 166, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(77, 166, 255, 0.3);
+        }
+
+        .back-btn:hover { background: rgba(255, 204, 0, 0.1); color: #ffcc00; border-color: #ffcc00; }
+
+        h1 { color: #ffcc00; margin: 0; font-size: 2.2em; text-transform: uppercase; }
+
+        /* --- KHU VỰC: CÔNG THỨC CINEMATIC --- */
+        .formula-box {
+            background: linear-gradient(180deg, rgba(77, 166, 255, 0.05) 0%, rgba(0,0,0,0.5) 100%);
+            border: 1px solid rgba(77, 166, 255, 0.2);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .lead-text {
+            font-size: 1.2em;
+            color: #e6e6e6;
+            margin-bottom: 30px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .formula-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .f-tag {
+            background: rgba(77, 166, 255, 0.15);
+            color: #4da6ff;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            border: 1px solid rgba(77, 166, 255, 0.4);
+            font-size: 1.1em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .f-plus { color: #ffcc00; font-weight: bold; font-size: 1.5em; }
+
+        /* --- PHÂN TÍCH TỪNG YẾU TỐ & CHỖ ĐỂ ẢNH --- */
+        .concept-row {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 40px;
+            margin-bottom: 60px;
+            align-items: center;
+        }
+
+        /* Đảo ngược vị trí ảnh và chữ cho sinh động */
+        .concept-row.reverse { grid-template-columns: 1.2fr 1fr; }
+        .concept-row.reverse .concept-text { order: 2; }
+        .concept-row.reverse .concept-img { order: 1; }
+
+        .concept-text h3 {
+            color: #4da6ff;
+            font-size: 1.6em;
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .concept-text h3 i { color: #ff99cc; }
+        
+        .concept-text p {
+            font-size: 1.1em;
+            color: #bbb;
+            margin-bottom: 20px;
+        }
+
+        .question-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .q-tag {
+            background: rgba(255, 204, 0, 0.1);
+            color: #ffcc00;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            border: 1px solid rgba(255, 204, 0, 0.3);
+        }
+
+        /* Khung Placeholder chờ chèn ảnh */
+        .image-placeholder {
+            width: 100%;
+            aspect-ratio: 16 / 9; /* Tỷ lệ điện ảnh mặc định */
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .image-placeholder:hover {
+            border-color: #4da6ff;
+            background: rgba(77, 166, 255, 0.05);
+            color: #4da6ff;
+        }
+
+        .image-placeholder i { font-size: 3em; margin-bottom: 10px; }
+        .image-placeholder span { font-size: 1.1em; font-weight: bold; }
+        .image-placeholder small { margin-top: 5px; color: #888; }
+
+        /* Nếu bạn chèn thẻ <img> thật, nó sẽ lấp đầy khung này */
+        .image-placeholder img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            display: none; /* Xóa dòng này khi bạn có ảnh thật */
+        }
+
+        /* --- VÍ DỤ TỔNG HỢP --- */
+        .master-prompt {
+            background: #0a0a0f;
+            border: 1px solid #333;
+            border-left: 5px solid #ffcc00;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .prompt-code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #a3e635;
+            font-size: 1.15em;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .hl-param { color: #ff99cc; font-weight: bold; }
+
+        @media (max-width: 900px) {
+            .concept-row { grid-template-columns: 1fr !important; gap: 20px; }
+            .concept-row.reverse .concept-text { order: 1; }
+            .concept-row.reverse .concept-img { order: 2; }
+            .formula-flex { gap: 8px; }
+            .f-tag { font-size: 0.9em; padding: 10px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="header-top">
+        <a href="hoc-tap.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+        <h1>2. HỌC CÁCH TẠO ẢNH CINEMATIC</h1>
+    </div>
+
+    <!-- CÔNG THỨC -->
+    <div class="formula-box">
+        <div class="lead-text">
+            Sai lầm lớn nhất của người mới là bắt đầu bằng những câu lệnh (prompt) dài dòng, sao chép một cách máy móc <span class="hide-cite">[cite: 1]</span>. Thay vì học vẹt, hãy học cách tư duy như một đạo diễn hình ảnh bằng công thức cấu thành khung hình dưới đây <span class="hide-cite">[cite: 1]</span>:
+        </div>
+
+        <div class="formula-flex">
+            <div class="f-tag">Nhân vật</div> <div class="f-plus">+</div>
+            <div class="f-tag">Hành động</div> <div class="f-plus">+</div>
+            <div class="f-tag">Bối cảnh</div> <div class="f-plus">+</div>
+            <div class="f-tag">Bố cục</div> <div class="f-plus">+</div>
+            <div class="f-tag">Camera</div> <div class="f-plus">+</div>
+            <div class="f-tag">Ánh sáng</div> <div class="f-plus">+</div>
+            <div class="f-tag">Màu sắc</div> <div class="f-plus">+</div>
+            <div class="f-tag">Mood</div>
+            <span class="hide-cite">[cite: 1]</span>
+        </div>
+    </div>
+
+    <!-- PHẦN 1: NHÂN VẬT & HÀNH ĐỘNG -->
+    <div class="concept-row">
+        <div class="concept-text">
+            <h3><i class="fa-solid fa-user-astronaut"></i> 1. Linh Hồn Khung Hình</h3>
+            <p>Khán giả luôn tìm kiếm điểm neo cảm xúc. Đừng chỉ mô tả chung chung "một người đàn ông". Hãy cho AI biết đặc điểm nhận dạng và hành động cụ thể đang diễn ra để tạo ra sự sống động.</p>
+            <div class="question-tags">
+                <div class="q-tag">Nhân vật là ai? <span class="hide-cite">[cite: 1]</span></div>
+                <div class="q-tag">Đang làm gì? <span class="hide-cite">[cite: 1]</span></div>
+            </div>
+        </div>
+        <div class="concept-img">
+            <!-- CHỖ TRỐNG CHÈN ẢNH 1 -->
+            <div class="image-placeholder">
+                <i class="fa-regular fa-image"></i>
+                <span>[ Chèn Ảnh Minh Họa Nhân Vật ]</span>
+                <small>Kéo thả hoặc dán ảnh của bạn vào mã HTML tại đây</small>
+                <img src="hinh1.jpeg" alt="Nhân vật">
+            </div>
+        </div>
+    </div>
+
+    <!-- PHẦN 2: BỐI CẢNH & GÓC MÁY -->
+    <div class="concept-row reverse">
+        <div class="concept-text">
+            <h3><i class="fa-solid fa-video"></i> 2. Không Gian Kể Chuyện</h3>
+            <p>Bối cảnh cung cấp không gian, còn Góc máy quyết định cách chúng ta nhìn nhận nhân vật đó. Một góc máy rộng (Wide Shot) giữa sa mạc sẽ tạo cảm giác cô đơn, lạc lõng hơn nhiều so với một góc cận (Close-up).</p>
+            <div class="question-tags">
+                <div class="q-tag">Đứng ở đâu? <span class="hide-cite">[cite: 1]</span></div>
+                <div class="q-tag">Camera đang ở đâu? <span class="hide-cite">[cite: 1]</span></div>
+                <div class="q-tag">Khung hình rộng hay gần? <span class="hide-cite">[cite: 1]</span></div>
+            </div>
+        </div>
+        <div class="concept-img">
+            <!-- CHỖ TRỐNG CHÈN ẢNH 2 -->
+            <div class="image-placeholder">
+                <i class="fa-solid fa-mountain-sun"></i>
+                <span>[ Chèn Ảnh Bối Cảnh / Khung Hình ]</span>
+                <small>Khuyến nghị Tỷ lệ 16:9</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHẦN 3: ÁNH SÁNG & MÀU SẮC -->
+    <div class="concept-row">
+        <div class="concept-text">
+            <h3><i class="fa-solid fa-palette"></i> 3. Vẽ Bằng Ánh Sáng (Lighting)</h3>
+            <p>Điện ảnh chính là nghệ thuật kiểm soát ánh sáng. Việc xác định rõ nguồn sáng đến từ đâu, kết hợp với tông màu chủ đạo sẽ ngay lập tức thiết lập "Mood" (cảm xúc) cho toàn bộ bức ảnh.</p>
+            <div class="question-tags">
+                <div class="q-tag">Ánh sáng đến từ đâu? <span class="hide-cite">[cite: 1]</span></div>
+                <div class="q-tag">Cảnh mang lại cảm giác gì? <span class="hide-cite">[cite: 1]</span></div>
+            </div>
+        </div>
+        <div class="concept-img">
+            <!-- CHỖ TRỐNG CHÈN ẢNH 3 -->
+            <div class="image-placeholder">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span>[ Chèn Ảnh Ánh Sáng / Màu Sắc ]</span>
+                <small>Màu sắc tương phản (Teal & Orange) hoặc Tối tăm (Moody)</small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thực Hành Tạo Ảnh - Lộ Trình AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- THIẾT LẬP CƠ BẢN --- */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #f4f4f9;
+            line-height: 1.6;
+        }
+        
+        /* Container 80% */
+        .container {
+            width: 80%;
+            max-width: 1600px;
+            margin: 40px auto;
+            background: #0f0f13;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 4vw;
+            box-sizing: border-box;
+        }
+
+        .hide-cite { display: none; }
+
+        /* --- ĐIỀU HƯỚNG --- */
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 20px;
+        }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 8px; color: #4da6ff;
+            text-decoration: none; font-weight: bold; transition: all 0.3s;
+            background: rgba(77, 166, 255, 0.1); padding: 12px 25px; border-radius: 30px;
+            border: 1px solid rgba(77, 166, 255, 0.3); font-size: 1.1em;
+        }
+        .back-btn:hover { background: rgba(255, 204, 0, 0.1); color: #ffcc00; border-color: #ffcc00; }
+        h1 { color: #fff; margin: 0; font-size: 2.2em; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- TIÊU ĐỀ SECTION --- */
+        .section-title {
+            color: #4da6ff; font-size: 1.8em; margin: 60px 0 30px 0;
+            display: flex; align-items: center; gap: 12px;
+            border-bottom: 2px solid rgba(77, 166, 255, 0.1); padding-bottom: 15px; text-transform: uppercase;
+        }
+        .section-title i { color: #ffcc00; }
+        .section-title.main-task {
+            font-size: 2.2em; color: #ffcc00; border-bottom-color: #ffcc00; margin-top: 80px; justify-content: center;
+        }
+
+        /* --- KHU VỰC VIDEO & LỜI KHUYÊN --- */
+        .prep-grid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: 40px; margin-bottom: 40px; }
+        .video-placeholder {
+            width: 100%; aspect-ratio: 16 / 9; background: rgba(0, 0, 0, 0.8); border-radius: 12px;
+            position: relative; box-sizing: border-box; overflow: hidden; padding: 0; border: none;
+        }
+        
+        .advice-box {
+            background: rgba(255, 204, 0, 0.05); border-left: 4px solid #ffcc00; padding: 30px;
+            border-radius: 12px; display: flex; flex-direction: column; justify-content: center;
+        }
+        .advice-box h3 { color: #ffcc00; margin-top: 0; font-size: 1.25em; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; text-transform: uppercase; }
+        .advice-box p { color: #d1d5db; font-size: 1.05em; margin-bottom: 15px; line-height: 1.7; }
+        .advice-flow { font-family: monospace; color: #ff99cc; font-size: 1.1em; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 6px; border: 1px solid rgba(255, 153, 204, 0.2); }
+        .advice-flow i { color: #555; margin: 0 8px; font-size: 0.9em; }
+
+        /* --- FORM PROMPT: BẢNG MẠCH NEON --- */
+        .prompt-center-box {
+            background: #111115; border: 1px solid #333; border-radius: 12px;
+            padding: 50px; margin: 60px 0; box-shadow: 0 20px 50px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+        }
+        .prompt-center-box::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, #ff99cc, #4da6ff, #a3e635, #ffcc00);
+        }
+        .prompt-header { text-align: center; margin-bottom: 40px; }
+        .prompt-header h3 { color: #fff; font-size: 1.8em; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 2px; }
+        .prompt-header p { color: #888; margin: 0; font-size: 1.05em; }
+
+        /* Tokens có màu nền và viền Neon */
+        .syntax-container { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; justify-content: center; align-items: center; }
+        .token { 
+            padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 1.05em; letter-spacing: 0.5px;
+            transition: transform 0.2s;
+        }
+        .token:hover { transform: translateY(-3px); }
+        
+        /* Màu sắc Neon đồng bộ với ảnh mẫu */
+        .t-pink { border: 1px solid #ff7eb3; color: #ff7eb3; background: rgba(255, 126, 179, 0.08); }
+        .t-green { border: 1px solid #a3e635; color: #a3e635; background: rgba(163, 230, 53, 0.08); }
+        .t-yellow { border: 1px solid #ffcc00; color: #ffcc00; background: rgba(255, 204, 0, 0.08); }
+        .t-blue { border: 1px solid #4da6ff; color: #4da6ff; background: rgba(77, 166, 255, 0.08); }
+        .t-red { border: 1px solid #ff4d4d; color: #ff4d4d; background: rgba(255, 77, 77, 0.08); font-family: monospace; }
+        
+        .separator { color: #666; font-size: 1.5em; font-weight: bold; margin: 0 2px; }
+
+        .prompt-example-wrapper { text-align: left; }
+        .prompt-example-wrapper p { color: #aaa; margin-bottom: 15px; font-size: 0.95em; }
+        .prompt-example {
+            background: #1a1a20; color: #d1d5db; padding: 30px; border-radius: 12px;
+            font-family: 'Courier New', Courier, monospace; font-size: 1.15em; line-height: 1.8; border: 1px solid #333; text-align: left;
+        }
+        .prompt-example span.hl-cam { color: #a3e635; }
+        .prompt-example span.hl-subj { color: #ff99cc; }
+        .prompt-example span.hl-action { color: #ffcc00; }
+        .prompt-example span.hl-env { color: #4da6ff; }
+        .prompt-example span.hl-neg { color: #ff4d4d; }
+        .prompt-example span.hl-sep { color: #fff; margin: 0 5px; font-weight: bold; }
+
+        /* --- VÍ DỤ WORKFLOW --- */
+        .workflow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 60px; }
+        .wf-step {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px;
+            padding: 20px; display: flex; flex-direction: column; position: relative;
+        }
+        .wf-num {
+            background: #4da6ff; color: #000; width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 15px; font-size: 1.1em;
+        }
+        .wf-title { color: #fff; font-size: 1.1em; margin-bottom: 10px; font-weight: bold; }
+        .wf-title span { color: #ffcc00; }
+        .wf-desc { color: #aaa; font-size: 0.95em; margin-bottom: 20px; flex-grow: 1; line-height: 1.6;}
+        .wf-image-box {
+            width: 100%; aspect-ratio: 4/3; background: rgba(0,0,0,0.6); border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #666; text-align: center; font-size: 0.85em; padding: 10px; position: relative; overflow: visible;
+            cursor: zoom-in; z-index: 1; transition: all 0.3s ease;
+        }
+        .wf-image-box i { font-size: 2.2em; margin-bottom: 10px; color: #555; }
+        .wf-image-box img { 
+            position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .wf-image-box:hover { z-index: 100; border-color: #4da6ff; }
+        .wf-image-box:hover img { transform: scale(1.6); box-shadow: 0 10px 40px rgba(0,0,0,0.9); border: 2px solid #4da6ff; }
+
+        /* =========================================================
+         BÀI TẬP THỰC HÀNH TẠO ẢNH BAN ĐẦU
+        ========================================================== */
+        .part-header {
+            background: rgba(255,255,255,0.03); border-left: 5px solid #ffcc00; padding: 15px 25px;
+            border-radius: 0 12px 12px 0; margin: 40px 0 25px 0;
+        }
+        .part-header h3 { margin: 0 0 5px 0; color: #fff; font-size: 1.4em; }
+        .part-header p { margin: 0; color: #aaa; font-size: 1em; line-height: 1.6; }
+
+        /* PHẦN 1: Grid 10 bài tập */
+        .exercise-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 50px; }
+        .ex-card {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-top: 4px solid #ffcc00;
+            border-radius: 12px; padding: 25px; position: relative; transition: transform 0.3s;
+        }
+        .ex-card:hover { transform: translateY(-5px); background: rgba(255, 204, 0, 0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .ex-badge {
+            position: absolute; top: -12px; left: 15px; background: #ffcc00; color: #000; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.8em; font-weight: bold; text-transform: uppercase;
+        }
+        .ex-card h4 { color: #fff; margin-top: 10px; font-size: 1.15em; margin-bottom: 10px; }
+        .ex-card p { color: #ccc; font-size: 0.95em; line-height: 1.5; margin: 0; }
+
+        /* PHẦN 2: Recreate Grid (Không còn bảng phân tích, tập trung vào ảnh) */
+        .recreate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .rc-card {
+            background: #111115; border: 1px solid rgba(77, 166, 255, 0.3); border-radius: 12px;
+            padding: 20px; display: flex; flex-direction: column; gap: 15px; position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .rc-badge {
+            position: absolute; top: -12px; left: 15px; background: #4da6ff; color: #000; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.8em; font-weight: bold; text-transform: uppercase; z-index: 2;
+        }
+        .rc-img-box {
+            width: 100%; aspect-ratio: 16/9; background: #1a1a20; border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 8px; position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; color: #555; text-align: center; font-size: 0.9em;
+        }
+        .rc-img-box img { 
+            position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; z-index: 2;
+        }
+        .rc-details { margin-top: 5px; }
+        .rc-details h4 { color: #4da6ff; font-size: 1.2em; margin: 0 0 10px 0; }
+        .rc-details p { color: #bbb; font-size: 0.95em; margin: 0 0 8px 0; line-height: 1.5; }
+        .rc-details p strong { color: #fff; }
+
+        /* PHẦN 3: Kể chuyện MV (Chỉ có Text Đề Bài) */
+        .mv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .mv-box {
+            background: rgba(255, 153, 204, 0.02); border: 1px solid rgba(255, 153, 204, 0.2);
+            border-left: 4px solid #ff99cc; border-radius: 12px; padding: 25px;
+            transition: transform 0.3s ease;
+        }
+        .mv-box:hover { transform: translateY(-3px); background: rgba(255, 153, 204, 0.05); }
+        .mv-title { color: #fff; font-size: 1.3em; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px;}
+        .mv-title i { color: #ff99cc; }
+        .mv-prompt { color: #bbb; font-size: 1.05em; line-height: 1.7; margin: 0; }
+        
+        /* HYPERLINK ÔN LẠI */
+        .review-link {
+            display: block; text-align: right; margin-top: 30px;
+            color: #888; font-size: 1em; text-decoration: none; transition: color 0.3s;
+        }
+        .review-link i { font-size: 0.9em; margin-left: 5px; transition: transform 0.3s; }
+        .review-link:hover { color: #4da6ff; }
+        .review-link:hover i { transform: translateX(5px); }
+
+        @media (max-width: 1024px) {
+            .workflow-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 30px 4vw; }
+            .prep-grid, .workflow-grid { grid-template-columns: 1fr; }
+            .recreate-grid, .mv-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="header-top">
+        <a href="hoc-tap.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Về Lộ trình</a>
+        <h1>Thực Hành Tạo Ảnh</h1>
+    </div>
+
+    <!-- KHU VỰC 1: CHUẨN BỊ & LỜI KHUYÊN -->
+    <div class="prep-grid">
+        <div class="video-placeholder">
+            <iframe width="100%" height="100%" 
+                src="https://www.youtube.com/embed/HSON-SoFz7s?si=Y09VTUlFYo48M8Xb" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen 
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px;">
+            </iframe>
+        </div>
+        
+        <div class="advice-box">
+            <h3><i class="fa-solid fa-lightbulb"></i> Vòng Lặp Tinh Chỉnh</h3>
+            <p>Bức ảnh đầu tiên hiếm khi hoàn hảo. Chìa khóa là biết "nói chuyện với AI" qua vòng lặp sau:</p>
+            <div class="advice-flow">
+                Yêu cầu <i class="fa-solid fa-arrow-right"></i> Generate <i class="fa-solid fa-arrow-right"></i> Quan sát <i class="fa-solid fa-arrow-right"></i> <strong>Phát hiện điểm sai</strong> <i class="fa-solid fa-arrow-right"></i> Sửa lệnh <i class="fa-solid fa-arrow-right"></i> Generate lại
+            </div>
+            <p style="margin-top: 15px; color: #888; font-size: 0.95em;">
+                <em>Ví dụ: Thấy camera quá gần <i class="fa-solid fa-arrow-right"></i> Đổi prompt thành Wide Shot <i class="fa-solid fa-arrow-right"></i> Thấy sai ánh sáng <i class="fa-solid fa-arrow-right"></i> Thêm "cinematic lighting" <i class="fa-solid fa-arrow-right"></i> Generate lại.</em>
+            </p>
+        </div>
+    </div>
+
+    <!-- KHU VỰC 2: FORM PROMPT TIÊU CHUẨN (BẢNG MẠCH NEON) -->
+    <div class="prompt-center-box">
+        <div class="prompt-header">
+            <h3>Cấu Trúc Prompt Tiêu Chuẩn</h3>
+            <p>Sắp xếp từ tổng quan (Khung hình) đến chi tiết (Nhân vật, Môi trường)</p>
+        </div>
+        
+        <!-- Khối Token màu sắc nổi bật -->
+        <div class="syntax-container">
+            <div class="token t-green">Cỡ cảnh</div> <span class="separator">,</span>
+            <div class="token t-green">Góc máy</div> <span class="separator">,</span>
+            <div class="token t-green">Bố cục</div> <span class="separator">|</span>
+            
+            <div class="token t-pink">Chủ thể</div> <span class="separator">,</span>
+            <div class="token t-pink">Tính từ mô tả</div> <span class="separator">,</span>
+            <div class="token t-pink">Biểu cảm</div> <span class="separator">,</span>
+            <div class="token t-pink">Trang phục/Đạo cụ</div> <span class="separator">|</span>
+            
+            <div class="token t-yellow">Hành động</div> <span class="separator">,</span>
+            <div class="token t-blue">Bối cảnh/Môi trường</div> <span class="separator">,</span>
+            <div class="token t-blue">Loại ánh sáng</div> <span class="separator">|</span>
+            
+            <div class="token t-red">Negative: no text, blur, logo</div>
+        </div>
+
+        <div class="prompt-example-wrapper">
+            <p>Ví dụ áp dụng bằng tiếng Anh (Hiệu quả nhất với hệ thống AI):</p>
+            <div class="prompt-example">
+                <span class="hl-green">Medium wide shot, low angle, center composition</span> <span class="hl-sep">|</span> 
+                <span class="hl-pink">a mysterious rogue, rugged and intimidating, intense gaze, wearing a worn leather cloak and holding a glowing staff</span> <span class="hl-sep">|</span> 
+                <span class="hl-yellow">walking through a crowded street</span>, 
+                <span class="hl-blue">realistic ancient bustling marketplace with terrified civilians parting ways, dramatic backlighting</span> <span class="hl-sep">|</span> 
+                <span class="hl-red">Negative: no text, blur, logo, modern elements</span>
+            </div>
+        </div>
+    </div>
+
+<!-- KHU VỰC 3: QUY TRÌNH THỰC HÀNH 4 BƯỚC -->
+    <style>
+        /* Tắt tự động phóng to, thêm hiệu ứng mờ nhẹ báo hiệu có thể click */
+        .wf-image-box img { 
+            position: absolute; top:0; left:0; width:100%; height:100%; 
+            object-fit: cover; border-radius: 8px; z-index: 2; 
+            cursor: pointer; transition: opacity 0.3s; 
+        }
+        .wf-image-box:hover img { 
+            opacity: 0.6; transform: none !important; box-shadow: none !important; border: none !important; 
+        }
+        
+        /* Giao diện khung xem ảnh nổi (Lightbox) */
+        .img-modal {
+            display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
+            align-items: center; justify-content: center; flex-direction: column;
+        }
+        .img-modal-content { max-width: 90%; max-height: 85vh; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); object-fit: contain; }
+        .img-modal-close {
+            position: absolute; top: 20px; right: 40px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .img-modal-close:hover { color: #ffcc00; }
+    </style>
+
+    <div class="section-title"><i class="fa-solid fa-laptop-code"></i> Workflow: ChatGPT 2.0 & GG Flow</div>
+    <div class="workflow-grid">
+        
+        <div class="wf-step">
+            <div class="wf-num">1</div>
+            <div class="wf-title">Viết ý tưởng <span>(ChatGPT)</span></div>
+            <div class="wf-desc">Nhập yêu cầu bằng tiếng Việt dựa theo cấu trúc tiêu chuẩn.</div>
+            <div class="wf-image-box">
+                <i class="fa-brands fa-rocketchat"></i>
+                <img src="chatgpt_wf_chat-flow.jpg" alt="Bước 1" onclick="openLightbox(this.src)">
+            </div>
+        </div>
+
+        <div class="wf-step">
+            <div class="wf-num">2</div>
+            <div class="wf-title">Lấy lệnh <span>(Prompt)</span></div>
+            <div class="wf-desc">Sao chép câu lệnh tiếng Anh hoàn chỉnh vừa được AI tạo ra.</div>
+            <div class="wf-image-box">
+                <i class="fa-solid fa-code"></i>
+                <img src="chatgptprompt_wf_chat-flow.jpg" alt="Bước 2" onclick="openLightbox(this.src)">
+            </div>
+        </div>
+
+        <div class="wf-step">
+            <div class="wf-num">3</div>
+            <div class="wf-title">Tạo ảnh <span>(GG Flow)</span></div>
+            <div class="wf-desc">Dán Prompt vào GG Flow và tiến hành Generate hình ảnh.</div>
+            <div class="wf-image-box">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <img src="copyflow_wf_chat-flow.jpg" alt="Bước 3" onclick="openLightbox(this.src)">
+            </div>
+        </div>
+
+        <div class="wf-step">
+            <div class="wf-num">4</div>
+            <div class="wf-title">Tinh chỉnh <span>(Vòng lặp)</span></div>
+            <div class="wf-desc">
+                Quan sát lỗi <i class="fa-solid fa-arrow-right" style="color: #ffcc00; margin: 0 4px; font-size: 0.9em;"></i> Sửa ý tưởng <i class="fa-solid fa-arrow-right" style="color: #ffcc00; margin: 0 4px; font-size: 0.9em;"></i> Generate lại.
+            </div>
+            <div class="wf-image-box">
+                <i class="fa-regular fa-image"></i>
+                <img src="mau_anh_wf_chat-flow.jpeg" alt="Bước 4" onclick="openLightbox(this.src)">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Khung Modal Ẩn (Sẽ hiện ra khi bấm vào ảnh) -->
+    <div id="imageLightbox" class="img-modal" onclick="closeLightbox()">
+        <span class="img-modal-close">&times;</span>
+        <img class="img-modal-content" id="lightboxImg">
+    </div>
+
+    <script>
+        // Lệnh kích hoạt tính năng xem ảnh
+        function openLightbox(src) {
+            document.getElementById('imageLightbox').style.display = 'flex';
+            document.getElementById('lightboxImg').src = src;
+        }
+        function closeLightbox() {
+            document.getElementById('imageLightbox').style.display = 'none';
+        }
+    </script>
+
+
+    <!-- =========================================================
+         BÀI TẬP THỰC HÀNH TẠO ẢNH BAN ĐẦU
+    ========================================================== -->
+    <div class="section-title main-task">BÀI TẬP THỰC HÀNH TẠO ẢNH BAN ĐẦU</div>
+    <p style="color: #bbb; margin-bottom: 40px; font-size: 1.1em; text-align: center;">* Ghi chú: Học viên làm bài tập tự do trên công cụ của mình, sau đó tổng hợp kết quả (ảnh + prompt) và gửi qua tin nhắn cho người hướng dẫn để nhận feedback.</p>
+    
+    <!-- PHẦN 1: TỰ DO ỨNG BIẾN -->
+    <div class="part-header">
+        <h3>Phần 1: Tự do ứng biến (10 Ý Tưởng Ấn Độ Cổ Đại)</h3>
+        <p>Làm quen với Prompt. Dựa vào 10 gợi ý bối cảnh, hãy tự chọn Góc máy, Cỡ cảnh & Ánh sáng để tạo ra khung hình của riêng bạn.</p>
+    </div>
+
+    <div class="exercise-grid">
+        <div class="ex-card">
+            <div class="ex-badge">Bài 1</div>
+            <h4>Cảnh Toàn Sử Thi (Epic Wide)</h4>
+            <p>Cung điện đá sa thạch ven sông Hằng. Hàng vạn quân mang giáp sắt và voi chiến tập hợp dưới mây đen.</p>
+        </div>
+        <div class="ex-card">
+            <div class="ex-badge">Bài 2</div>
+            <h4>Giới Thiệu Tướng Quân</h4>
+            <p>Dũng tướng vạm vỡ, đeo giáp vai vàng, tay cầm gươm Khanda đứng uy nghi giữa chiến trường rực lửa.</p>
+        </div>
+        <div class="ex-card">
+            <div class="ex-badge">Bài 3</div>
+            <h4>Dân Chúng Sinh Hoạt</h4>
+            <p>Khu chợ sầm uất với các gian hàng gia vị. Dân chúng mặc sari truyền thống buôn bán tấp nập.</p>
+        </div>
+        <div class="ex-card">
+            <div class="ex-badge">Bài 4</div>
+            <h4>Tỳ Kheo Khất Thực</h4>
+            <p>Vị tỳ kheo khoác y phấn tảo, tay ôm bình bát đất sét, đi chân trần qua con đường đất cằn cỗi.</p>
+        </div>
+        <div class="ex-card">
+            <div class="ex-badge">Bài 5</div>
+            <h4>Bắt Trọn Nội Tâm</h4>
+            <p>Khuôn mặt sạm nắng và đôi mắt thông tuệ của một vị tu sĩ già đang ngồi thiền định dưới gốc bồ đề.</p>
+        </div>
+        <div class="ex-card">
+            <div class="ex-badge">Bài 6</div>
+            <h4>Quyền Lực Áp Đảo</h4>
+            <p>Vị vua mặc hoàng bào ngồi vắt chéo chân trên bành ngự của voi chiến khổng lồ. Bầu không khí áp bức.</p>
+        </div>
+        <div class="ex-card">
+            <div class="ex-badge">Bài 7</div>
+            <h4>Sự Tĩnh Lặng Về Đêm</h4>
+            <p>Dân thường gầy gò ngồi quanh đống lửa ngoài rìa vương quốc, nét mặt lo âu khi ánh lửa bập bùng hắt lên.</p>
+        </div>
+        <div class="ex-card">
+            <div class="ex-badge">Bài 8</div>
+            <h4>Góc Nhìn Khách Quan</h4>
+            <p>Nhìn qua vai người lính gác. Phía xa là ngọn tháp đền thờ Hindu đang chìm trong biển lửa.</p>
+        </div>
+        <div class="ex-card">
+            <div class="ex-badge">Bài 9</div>
+            <h4>Nghi Lễ Tế Thần</h4>
+            <p>Các đạo sĩ Brahmin mặc áo trắng đang tung hương liệu vào ngọn lửa thiêng khổng lồ bùng cháy trong đêm.</p>
+        </div>
+        <div class="ex-card">
+            <div class="ex-badge">Bài 10</div>
+            <h4>Cuộc Đụng Độ</h4>
+            <p>Hai chiến binh dũng mãnh đứng đối diện nhau giữa hoang mạc cát bụi mịt mù, chuẩn bị lao vào vòng chiến.</p>
+        </div>
+    </div>
+
+    <!-- PHẦN 2: PHÂN TÍCH VÀ TÁI TẠO -->
+    <div class="part-header" style="border-color: #4da6ff;">
+        <h3 style="color: #4da6ff;">Phần 2: Phân tích & Tái tạo (Reverse Engineering)</h3>
+        <p>Bạn hãy lưu 10 hình ảnh phim gốc từ thư mục bài giảng vào máy tính, thay thế đường dẫn ảnh (src) trong mã nguồn để chúng hiển thị tại đây. Bằng kiến thức đã học, hãy dùng AI tạo ra 1 bức ảnh mới có tỷ lệ, ánh sáng và màu sắc tương đồng nhất với ảnh gốc.</p>
+    </div>
+
+    <div class="recreate-grid">
+        
+        <!-- Bài 1 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 1</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="bladerunner2049.jpg" alt="Blade Runner">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 1 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: Blade Runner 2049</h4>
+                <p><strong>Cảm xúc:</strong> Lạc lõng, tĩnh mịch và cằn cỗi.</p>
+                <p><strong>Gợi ý:</strong> Chú ý đến bầu không khí sương mù (foggy) và tone màu cam bụi bặm đặc trưng.</p>
+            </div>
+        </div>
+
+        <!-- Bài 2 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 2</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="Dune.webp" alt="Dune">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 2 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: Dune (2021)</h4>
+                <p><strong>Cảm xúc:</strong> Kịch tính, hùng vĩ và uy nghiêm.</p>
+                <p><strong>Gợi ý:</strong> Phân tích hướng ánh sáng chiếu qua khe hở và tỷ lệ con người so với kiến trúc.</p>
+            </div>
+        </div>
+
+        <!-- Bài 3 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 3</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="batman.webp" alt="The Batman">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 3 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: The Batman (2022)</h4>
+                <p><strong>Cảm xúc:</strong> U ám, bí ẩn và nguy hiểm.</p>
+                <p><strong>Gợi ý:</strong> Quan sát cách đạo diễn sử dụng bóng tối (Negative space) và ánh sáng ven (Rim light).</p>
+            </div>
+        </div>
+
+        <!-- Bài 4 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 4</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="madmax.jpg" alt="Mad Max">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 4 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: Mad Max: Fury Road</h4>
+                <p><strong>Cảm xúc:</strong> Hỗn loạn, tốc độ và cuồng nộ.</p>
+                <p><strong>Gợi ý:</strong> Chú ý bố cục trung tâm (Center) đặt giữa một bối cảnh cực kỳ nhiều chi tiết rác.</p>
+            </div>
+        </div>
+
+        <!-- Bài 5 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 5</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="gladiator.jpg" alt="Gladiator">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 5 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: Gladiator (2000)</h4>
+                <p><strong>Cảm xúc:</strong> Bi tráng, vinh quang và hoài niệm.</p>
+                <p><strong>Gợi ý:</strong> Tập trung vào cách xử lý ánh sáng ngược (Backlight) lúc mặt trời lặn (Golden hour).</p>
+            </div>
+        </div>
+
+        <!-- Bài 6 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 6</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="LOTR.jpg" alt="LOTR">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 6 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: Lord of the Rings</h4>
+                <p><strong>Cảm xúc:</strong> Kỳ ảo, cổ kính và vĩ đại.</p>
+                <p><strong>Gợi ý:</strong> Cỡ cảnh cực rộng (Extreme Wide) để thu trọn kiến trúc vĩ đại của kỷ nguyên cũ.</p>
+            </div>
+        </div>
+
+        <!-- Bài 7 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 7</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="revenent.jpg" alt="The Revenant">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 7 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: The Revenant (2015)</h4>
+                <p><strong>Cảm xúc:</strong> Lạnh lẽo, khắc nghiệt và chân thực.</p>
+                <p><strong>Gợi ý:</strong> Bộ phim sử dụng hoàn toàn ánh sáng tự nhiên (Natural Light) và góc máy siêu rộng.</p>
+            </div>
+        </div>
+
+        <!-- Bài 8 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 8</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="joker.webp" alt="Joker">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 8 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: Joker (2019)</h4>
+                <p><strong>Cảm xúc:</strong> Điên loạn, cô độc và ngột ngạt.</p>
+                <p><strong>Gợi ý:</strong> Phân tích sự tương phản giữa hai mảng màu Xanh/Cam (Teal & Orange) và độ sâu trường ảnh.</p>
+            </div>
+        </div>
+
+        <!-- Bài 9 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 9</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="1917film.jpg" alt="1917">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 9 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: 1917 (2019)</h4>
+                <p><strong>Cảm xúc:</strong> Khốc liệt, dồn dập và cận kề cái chết.</p>
+                <p><strong>Gợi ý:</strong> Góc máy luôn bám sát theo sau lưng nhân vật (Tracking shot) giữa khói bụi chiến trường.</p>
+            </div>
+        </div>
+
+        <!-- Bài 10 -->
+        <div class="rc-card">
+            <div class="rc-badge">Khung hình 10</div>
+            <div class="rc-img-box">
+                <!-- BẠN CHÈN ẢNH TỪ MÁY TÍNH VÀO ĐÂY (Thay nội dung trong src="...") -->
+                <img src="oppenheimer.avif  " alt="Oppenheimer">
+                <div style="z-index: 1; opacity: 0.3;">[ Khu vực chèn ảnh 10 ]</div>
+            </div>
+            <div class="rc-details">
+                <h4>Phim: Oppenheimer (2023)</h4>
+                <p><strong>Cảm xúc:</strong> Trĩu nặng, ám ảnh và trí tuệ.</p>
+                <p><strong>Gợi ý:</strong> Ánh sáng chói lóa hắt lên khuôn mặt (High-key) kết hợp với khẩu độ nông làm nhòa phông nền.</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- PHẦN 3: KỂ CHUYỆN BẰNG HÌNH ẢNH (MV) -->
+    <div class="part-header" style="border-color: #ff99cc;">
+        <h3 style="color: #ff99cc;">Phần 3: Kể Chuyện Bằng Hình Ảnh (Tự chọn 1 trong 5 Đề tài)</h3>
+        <p>Hãy chọn 1 đề tài dưới đây và tự làm đạo diễn: Tưởng tượng trong đầu 4 phân cảnh cốt lõi để kể trọn vẹn câu chuyện này, sau đó dùng AI tạo ra chúng sao cho thật thống nhất về Tone màu và Phong cách (Consistency).</p>
+    </div>
+
+    <div class="mv-grid">
+        
+        <div class="mv-box">
+            <h4 class="mv-title"><i class="fa-solid fa-chess-knight"></i> Đề bài 1: Sự sụp đổ của vương quốc</h4>
+            <p class="mv-prompt">
+                Một hiệp sĩ giáp bạc đứng trên đỉnh đồi tuyết, bất lực chứng kiến vương quốc của mình bị thiêu rụi bởi biển lửa. Từ sự tuyệt vọng tột cùng khi nhặt lại lá cờ gia tộc cháy xém giữa đống đổ nát, cho đến sự phẫn nộ trong ánh mắt trước khi quay lưng bước vào màn đêm bão tuyết mù mịt. 
+                <br><br><strong>Màu chủ đạo:</strong> Xanh xám lạnh lẽo và Cam đỏ của ngọn lửa.
+            </p>
+        </div>
+
+        <div class="mv-box">
+            <h4 class="mv-title"><i class="fa-solid fa-staff-snake"></i> Đề bài 2: Hành trình của tu sĩ mù</h4>
+            <p class="mv-prompt">
+                Kể về một vị tu sĩ già mù lòa khoác áo choàng rách, tay cầm gậy gỗ bước ra từ một ngôi đền đá thiêng liêng. Ông một mình băng qua trận bão cát sa mạc mịt mù che khuất tầm nhìn, để cuối cùng tìm thấy sự bình yên khi chạm tay vào thân của một cây cổ thụ khổng lồ phát sáng giữa cồn cát cằn cỗi.
+                <br><br><strong>Màu chủ đạo:</strong> Vàng cát rực rỡ và Trắng thuần khiết.
+            </p>
+        </div>
+
+        <div class="mv-box">
+            <h4 class="mv-title"><i class="fa-solid fa-mask"></i> Đề bài 3: Cuộc ám sát đêm lễ hội</h4>
+            <p class="mv-prompt">
+                Giữa một con phố đông đúc người múa hát dưới hàng ngàn chiếc lồng đèn đỏ rực rỡ, có một bóng đen thích khách đang thu mình di chuyển trên mái ngói. Hắn lạnh lùng quan sát mục tiêu là một gã thương nhân béo tốt đang say sưa nâng ly rượu, trước khi từ từ rút thanh đoản kiếm sắc lạnh ra khỏi vỏ.
+                <br><br><strong>Màu chủ đạo:</strong> Tối tăm (Low-key) điểm xuyết ánh sáng Đỏ thẫm.
+            </p>
+        </div>
+
+        <div class="mv-box">
+            <h4 class="mv-title"><i class="fa-solid fa-hammer"></i> Đề bài 4: Sự ra đời vũ khí thần thoại</h4>
+            <p class="mv-prompt">
+                Bên trong một hang động núi lửa khói bốc mịt mù, một thợ rèn cơ bắp nhễ nhại mồ hôi đang vung chiếc búa tạ khổng lồ đập xuống đe. Khắc họa sự hung hãn của tia lửa bắn tung tóe mỗi khi búa chạm vào kim loại đỏ rực, cho đến lúc thanh trọng kiếm hoàn thành tỏa ra luồng khí ma thuật lạnh lẽo.
+                <br><br><strong>Màu chủ đạo:</strong> Cam rực của than hồng và Kim loại xám lạnh.
+            </p>
+        </div>
+
+        <div class="mv-box">
+            <h4 class="mv-title"><i class="fa-regular fa-handshake"></i> Đề bài 5: Cuộc gặp gỡ định mệnh</h4>
+            <p class="mv-prompt">
+                Hai đạo quân xếp hàng dài hai bên đầu của một cây cầu đá cổ kính băng qua vực thẳm sương mù. Từ trong đám đông, hai vị thủ lĩnh bọc thép từ từ cưỡi ngựa tiến về giữa cầu. Hãy khắc họa sự dò xét, nghi ngờ trong ánh mắt của họ trước khi tiến tới một cái bắt tay lịch sử làm thay đổi cục diện chiến tranh.
+                <br><br><strong>Màu chủ đạo:</strong> Sương mù xám bạc và ánh sáng ban mai u ám.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Hyperlink ôn lại -->
+    <a href="kien-thuc-dien-anh.html" class="review-link">Bạn cần tra cứu lại các loại Cỡ Cảnh, Góc Máy, Ánh Sáng? Xem tại đây <i class="fa-solid fa-arrow-right"></i></a>
+
+</div>
+
+</body>
+</html>

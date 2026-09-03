@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Từ Điển Điện Ảnh Cơ Bản</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- THIẾT LẬP CƠ BẢN --- */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #f4f4f9;
+            line-height: 1.6;
+        }
+        
+        /* Container mở rộng 80% màn hình, nới lỏng max-width để hình to hơn */
+        .container {
+            width: 80%;
+            max-width: 1800px;
+            margin: 40px auto;
+            background: #0f0f13;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 4vw;
+            box-sizing: border-box;
+        }
+
+        /* Ẩn trích dẫn */
+        .hide-cite { display: none; }
+
+        /* --- ĐIỀU HƯỚNG --- */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 25px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #4da6ff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            background: rgba(77, 166, 255, 0.1);
+            padding: 12px 25px;
+            border-radius: 30px;
+            border: 1px solid rgba(77, 166, 255, 0.3);
+            font-size: 1.1em;
+        }
+        .back-btn:hover { background: rgba(255, 204, 0, 0.1); color: #ffcc00; border-color: #ffcc00; }
+        h1 { color: #ffcc00; margin: 0; font-size: 2.2em; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* --- KHỐI INTRO: CINEMATOGRAPHY BREAKDOWN --- */
+        .cinematic-breakdown {
+            background: #061124;
+            border-radius: 16px;
+            border: 1px solid #1a2c4e;
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .cb-title {
+            font-size: 2.5em; color: #fff; font-weight: 900;
+            margin: 0 0 20px 0; line-height: 1.2; letter-spacing: -0.5px;
+        }
+        .cb-info { color: #8bb4f7; font-size: 1.05em; margin-bottom: 25px; }
+        .cb-info strong { color: #fff; }
+        .cb-highlight {
+            background: rgba(255, 255, 255, 0.05); padding: 15px 20px; border-radius: 8px;
+            border-left: 4px solid #4da6ff; font-family: monospace; color: #a3e635;
+            margin-bottom: 25px; font-size: 1.05em;
+        }
+        .cb-pro-tip {
+            font-size: 1.1em; color: #fff; font-weight: 500;
+            margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
+        }
+        
+        /* So sánh ảnh thường vs phim */
+        .cb-comparison {
+            display: flex; align-items: center; justify-content: space-between; gap: 20px;
+        }
+        .cb-image-box {
+            flex: 1; aspect-ratio: 16/9; background: #000; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2); position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #666; text-align: center; overflow: hidden;
+        }
+        .cb-image-box img { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; z-index: 1; }
+        .cb-image-box span { position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; color: #fff; font-size: 0.85em; font-family: monospace; background: rgba(0,0,0,0.6); padding: 5px; z-index: 2; }
+        .cb-arrow {
+            width: 50px; height: 50px; border-radius: 50%; border: 2px solid #4da6ff;
+            display: flex; align-items: center; justify-content: center; color: #4da6ff; font-size: 1.2em;
+            background: rgba(77,166,255,0.1); flex-shrink: 0;
+        }
+
+        /* --- TIÊU ĐỀ PHÂN MỤC --- */
+        .section-header { text-align: center; margin: 80px 0 40px 0; }
+        .section-header h2 {
+            color: #4da6ff; font-size: 2.2em; margin-bottom: 15px;
+            display: inline-block; border-bottom: 3px solid #ff99cc; padding-bottom: 15px; text-transform: uppercase;
+        }
+        .section-header p { color: #bbb; font-size: 1.15em; max-width: 1000px; margin: 0 auto; }
+
+        /* --- KHUNG PLACEHOLDER ẢNH (Bỏ Zoom) --- */
+        .image-placeholder {
+            width: 100%; aspect-ratio: 16 / 9;
+            background: rgba(0, 0, 0, 0.6); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #666; position: relative; overflow: hidden; transition: all 0.3s;
+        }
+        .image-placeholder i { font-size: 2.5em; margin-bottom: 10px; z-index: 0; }
+        .image-placeholder span { font-size: 1.1em; z-index: 0; }
+        
+        .image-placeholder img { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; border-radius: 8px; transition: opacity 0.3s ease; z-index: 1;
+        }
+        
+        /* Hiệu ứng hover nhẹ nhàng không phóng to */
+        .image-placeholder:hover { border-color: #4da6ff; }
+        .image-placeholder:hover img { opacity: 0.85; }
+
+        /* --- GALLERY GRID (Tăng kích thước card để ảnh to hơn) --- */
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; margin-bottom: 40px;
+        }
+        .card-item {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
+            padding: 25px; transition: transform 0.3s ease; position: relative; z-index: 1;
+        }
+        .card-item:hover { background: rgba(255,255,255,0.04); border-color: rgba(77,166,255,0.3); transform: translateY(-3px); }
+        .card-info { margin-top: 20px; }
+        .card-info h3 { color: #fff; font-size: 1.5em; margin: 0 0 10px 0; display: flex; justify-content: space-between; align-items: center;}
+        .card-info h3 span { color: #ff99cc; font-size: 0.65em; font-weight: normal; text-transform: uppercase; border: 1px solid #ff99cc; padding: 4px 8px; border-radius: 6px;}
+        .card-info p { color: #aaa; margin: 0; font-size: 1.1em; line-height: 1.6; }
+        .card-info p strong { color: #4da6ff; }
+        
+        /* So sánh (Compare grid) - Tăng kích thước khung */
+        .compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 40px; }
+        .compare-box { text-align: center; }
+        .compare-box h4 { color: #ffcc00; font-size: 1.4em; margin-bottom: 15px; }
+        .compare-box p { color: #aaa; font-size: 1.1em; margin-top: 15px; text-align: left; }
+        .compare-box p strong { color: #fff; }
+
+        /* Tag Cloud */
+        .tag-cloud-section { background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 30px; border: 1px solid rgba(255,255,255,0.05); }
+        .tag-cloud-section h4 { color: #aaa; margin-top: 0; font-size: 1.1em; text-transform: uppercase; margin-bottom: 20px; }
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: 12px; }
+        .tag { background: rgba(255,255,255,0.05); color: #d1d5db; padding: 8px 18px; border-radius: 30px; font-size: 0.95em; border: 1px solid rgba(255,255,255,0.1); }
+        .tag:hover { background: rgba(77, 166, 255, 0.2); color: #fff; border-color: #4da6ff; }
+
+        .separator-line { height: 1px; background: rgba(255,255,255,0.1); margin: 60px 0; border: none; }
+
+        @media (max-width: 1024px) {
+            .cb-comparison { flex-direction: column; }
+            .cb-arrow { transform: rotate(90deg); }
+            .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); }
+            .compare-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        }
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 30px 4vw; }
+            .gallery-grid, .compare-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="header-top">
+        <a href="hoc-tap.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Về Lộ trình</a>
+        <h1>3. TỪ ĐIỂN ĐIỆN ẢNH BẰNG HÌNH ẢNH</h1>
+    </div>
+
+    <!-- KHỐI INTRO: CINEMATOGRAPHY SHOT BREAKDOWN -->
+    <div class="cinematic-breakdown">
+        <h2 class="cb-title">Cinematography<br>Shot Breakdown</h2>
+        
+        <div class="cb-info">
+            <strong>Ideal Prompt Style:</strong><br>
+            Cinematic Still of [Describe Characters, action, and setting], [Describe Shot Type and Composition], [Describe Style]
+        </div>
+
+        <div class="cb-highlight">
+            Example: A cinematic still of a woman drinking coffee in a New York Cafe at night, medium shot, in the style of a 1960's movie.
+        </div>
+
+        <div class="cb-pro-tip">
+            <span style="color: #ffcc00;"><i class="fa-solid fa-bolt"></i> PRO TIP:</span> Tôi luôn bắt đầu prompt bằng cụm từ <strong>'A Cinematic Still'</strong>. Chỉ riêng cụm từ này đã đủ để tăng cường đáng kể chất lượng khung hình của bạn.
+        </div>
+
+        <div class="cb-comparison">
+            <div class="cb-image-box">
+                <img src="woman-normal.jpg" alt="Ảnh thường">
+                <span>Prompt: a woman in a fashion film</span>
+            </div>
+            
+            <div class="cb-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+            
+            <div class="cb-image-box" style="border-color: #4da6ff; background: rgba(77,166,255,0.05);">
+                <img src="woman-cine.jpg" alt="Ảnh điện ảnh">
+                <span style="color: #a3e635;">Prompt: <strong>a cinematic still of</strong> a woman in a fashion film</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PHẦN 1: CỠ CẢNH (SHOT SIZE)
+    =========================================== -->
+    <div class="section-header" style="margin-top: 40px;">
+        <h2>I. CỠ CẢNH (SHOT SIZE)</h2>
+        <p>Cỡ cảnh quyết định việc lấy bao nhiêu không gian và cơ thể nhân vật vào khung hình. Cỡ cảnh càng hẹp, cảm xúc càng mãnh liệt.</p>
+    </div>
+
+    <div class="gallery-grid">
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-city"></i><span>[ Ảnh Establishing Shot ]</span>
+                <img src="establishingshot.jpg" alt="Establishing Shot">
+            </div>
+            <div class="card-info">
+                <h3>Establishing Shot <span>Cảnh mở đầu</span></h3>
+                <p><strong>Dụng ý nghệ thuật:</strong> Đặt ở đầu một phân đoạn, báo cho khán giả biết câu chuyện sắp diễn ra ở đâu, bối cảnh thời gian nào trước khi đi sâu vào nhân vật.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-earth-americas"></i><span>[ Ảnh Ultra Wide Shot ]</span>
+                <img src="ultrawideshot.jpg" alt="Ultra Wide Shot">
+            </div>
+            <div class="card-info">
+                <h3>Ultra Wide Shot <span>Viễn cảnh</span></h3>
+                <p><strong>Dụng ý nghệ thuật:</strong> Lấy không gian mênh mông bạt ngàn. Thể hiện sự kỳ vĩ của thiên nhiên, sự hoành tráng của trận chiến, hoặc sự nhỏ bé, cô độc của con người.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-mountain-sun"></i><span>[ Ảnh Wide Shot ]</span>
+                <img src="wideshot.jpg" alt="Wide Shot">
+            </div>
+            <div class="card-info">
+                <h3>Wide Shot <span>Toàn cảnh</span></h3>
+                <p><strong>Dụng ý nghệ thuật:</strong> Lấy trọn vẹn nhân vật và môi trường xung quanh. Cho thấy mối quan hệ tương tác trực tiếp giữa con người và nơi họ đang đứng.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-person-rays"></i><span>[ Ảnh Full Shot ]</span>
+                <img src="fullshot.jpg" alt="Full Shot">
+            </div>
+            <div class="card-info">
+                <h3>Full Shot / Hero Shot <span>Toàn thân</span></h3>
+                <p><strong>Dụng ý nghệ thuật:</strong> Lấy trọn cơ thể nhân vật từ đỉnh đầu đến gót chân. Tôn vinh vẻ đẹp hình thể, trang phục hoặc sự uy dũng, tư thế sẵn sàng chiến đấu.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-person"></i><span>[ Ảnh Medium Shot ]</span>
+                <img src="mediumshot.png" alt="Medium Shot">
+            </div>
+            <div class="card-info">
+                <h3>Medium Shot <span>Bán thân</span></h3>
+                <p><strong>Dụng ý nghệ thuật:</strong> Lấy từ eo trở lên. Cỡ cảnh trung tính tự nhiên nhất, dùng rất nhiều để quay hội thoại hoặc sinh hoạt hàng ngày.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-user"></i><span>[ Ảnh Medium Close Up ]</span>
+                <img src="mediumcloseupshot.avif" alt="Medium Close Up">
+            </div>
+            <div class="card-info">
+                <h3>Medium Close-Up <span>Cận ngực</span></h3>
+                <p><strong>Dụng ý nghệ thuật:</strong> Cắt từ ngực trở lên. Cân bằng hoàn hảo giữa việc tập trung vào nét mặt và một chút chuyển động vai của diễn viên.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-face-smile"></i><span>[ Ảnh Close-up ]</span>
+                <img src="closeupshot.webp" alt="Close Up">
+            </div>
+            <div class="card-info">
+                <h3>Close-Up <span>Cận mặt</span></h3>
+                <p><strong>Dụng ý nghệ thuật:</strong> Cắt bỏ hoàn toàn bối cảnh thừa. Bắt buộc khán giả phải tập trung 100% vào sự thay đổi cảm xúc trên nét mặt nhân vật.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-eye"></i><span>[ Ảnh Extreme Close-up ]</span>
+                <img src="extremecloseupshot.jpeg" alt="Extreme Close Up">
+            </div>
+            <div class="card-info">
+                <h3>Extreme Close-Up <span>Đặc tả</span></h3>
+                <p><strong>Dụng ý nghệ thuật:</strong> Cực cận vào một chi tiết (ánh mắt, giọt nước mắt, bàn tay siết chặt, đạo cụ). Tạo cảm giác ngột ngạt hoặc soi xét tâm lý dữ dội.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-user-group"></i><span>[ Ảnh Two Shot ]</span>
+                <img src="twoshot.webp" alt="Two Shot">
+            </div>
+            <div class="card-info">
+                <h3>Two Shot <span>Cảnh đôi</span></h3>
+                <p><strong>Dụng ý nghệ thuật:</strong> Gói gọn hai nhân vật vào chung một khung hình để thể hiện sự gắn kết, tình yêu hoặc sự đối đầu trực diện giữa họ.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PHẦN 2: GÓC MÁY (CAMERA ANGLE)
+    =========================================== -->
+    <hr class="separator-line">
+    <div class="section-header">
+        <h2>II. GÓC MÁY (CAMERA ANGLE)</h2>
+        <p>Góc máy tạo ra "quyền lực" và trạng thái tâm lý. Một nhân vật nhìn từ dưới lên sẽ rất khác biệt so với nhìn từ trên cao xuống.</p>
+    </div>
+
+    <div class="gallery-grid">
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-arrows-left-right"></i><span>[ Ảnh Eye Level ]</span>
+                <img src="eyelevelshot.png" alt="Eye Level">
+            </div>
+            <div class="card-info">
+                <h3>Eye Level Shot <span>Ngang tầm mắt</span></h3>
+                <p>Góc máy trung lập, đặt ngay ngang tầm mắt diễn viên. Mang lại sự bình đẳng, chân thực, giúp khán giả dễ đồng cảm nhất.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-arrow-up-right-dots"></i><span>[ Ảnh Low Angle ]</span>
+                <img src="lowangleshot.jpg" alt="Low Angle">
+            </div>
+            <div class="card-info">
+                <h3>Low Angle Shot <span>Góc thấp</span></h3>
+                <p>Máy quay đặt thấp hất lên. Biến nhân vật trở nên to lớn, uy quyền, đáng sợ hoặc mang dáng dấp của một người hùng áp đảo.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-arrow-down-right-dots"></i><span>[ Ảnh High Angle ]</span>
+                <img src="highangleshot.webp" alt="High Angle">
+            </div>
+            <div class="card-info">
+                <h3>High Angle Shot <span>Góc cao</span></h3>
+                <p>Máy quay đặt cao nhìn xuống. Phủ lên nhân vật sự yếu đuối, lép vế, nhỏ bé hoặc cảm giác đang bị mắc kẹt, bị theo dõi.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-jet-fighter-up"></i><span>[ Ảnh Overhead Shot ]</span>
+                <img src="overheadshot.webp" alt="Overhead Shot">
+            </div>
+            <div class="card-info">
+                <h3>Overhead / Bird's Eye <span>Đỉnh đầu</span></h3>
+                <p>Quay thẳng đứng từ trên đỉnh đầu xuống. Thường dùng mô tả địa hình chiến thuật, sự cô độc hoặc hàm ý về sự an bài của số phận.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-user-ninja"></i><span>[ Ảnh 3/4 Angle ]</span>
+                <img src="3-4angleshot.jpg" alt="3/4 Angle">
+            </div>
+            <div class="card-info">
+                <h3>3/4 Angle <span>Góc 3/4</span></h3>
+                <p>Góc máy đặt hơi lệch 45 độ so với mặt chính diện. Tạo ra khối 3D đổ bóng tự nhiên, làm khuôn mặt có chiều sâu và đậm chất điện ảnh hơn.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-arrow-turn-up"></i><span>[ Ảnh Over the Shoulder ]</span>
+                <img src ="OTSshot.jpg" alt="Over the Shoulder">
+            </div>
+            <div class="card-info">
+                <h3>Over the Shoulder <span>Góc qua vai</span></h3>
+                <p>Nhìn qua vai một người hướng về người đối diện. Kết nối hai người trong cùng không gian, tạo chiều sâu cho cảnh hội thoại.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-level-down-alt"></i><span>[ Ảnh Dutch Angle ]</span>
+                <img src="dutchangleshot.jpg" alt="Dutch Angle">
+            </div>
+            <div class="card-info">
+                <h3>Dutch Angle <span>Góc nghiêng</span></h3>
+                <p>Làm nghiêng trục ngang của khung hình. Tạo cảm giác thế giới đang mất cân bằng, điên loạn, bất ổn hoặc dự báo điềm gở.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PHẦN 3: BỐ CỤC (COMPOSITION)
+    =========================================== -->
+    <hr class="separator-line">
+    <div class="section-header">
+        <h2>III. BỐ CỤC (COMPOSITION)</h2>
+        <p>Cách sắp xếp vị trí các đối tượng để dẫn dắt ánh mắt khán giả đến đúng nơi đạo diễn mong muốn một cách nghệ thuật nhất.</p>
+    </div>
+
+    <div class="gallery-grid">
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-border-all"></i><span>[ Ảnh Rule of Thirds ]</span>
+                <img src="ruleofthird.avif" alt="Rule of Thirds">
+            </div>
+            <div class="card-info">
+                <h3>Rule of Thirds <span>Quy tắc 1/3</span></h3>
+                <p>Chia khung hình làm 9 ô. Đặt nhân vật vào các điểm giao cắt. Tạo sự cân bằng, tự nhiên và chừa khoảng không (Look room) cho hướng nhìn.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-brands fa-galactic-senate"></i><span>[ Ảnh Golden Ratio ]</span>
+                <img src="goldenratio.jpg" alt="Golden Ratio">
+            </div>
+            <div class="card-info">
+                <h3>Golden Ratio <span>Tỷ lệ vàng / Fibonacci</span></h3>
+                <p>Cấu trúc xoắn ốc hoàn mỹ của tự nhiên. Dẫn dắt ánh mắt khán giả cuộn dần vào điểm tụ (nhân vật chính) một cách êm ái và thỏa mãn thị giác nhất.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-crosshairs"></i><span>[ Ảnh Center Composition ]</span>
+                <img src="center.jpg" alt="Center Composition">
+            </div>
+            <div class="card-info">
+                <h3>Center Composition <span>Bố cục Trung tâm</span></h3>
+                <p>Chủ thể đặt chuẩn xác giữa khung hình. Gây sự chú ý trực diện, phá vỡ bức tường thứ 4. Thường dùng trong cảnh bộc bạch nội tâm hoặc uy quyền.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-scale-balanced"></i><span>[ Ảnh Symmetrical Shot ]</span>
+                <img src="symmetricalshot.webp" alt="Symmetrical Shot">
+            </div>
+            <div class="card-info">
+                <h3>Symmetrical Shot <span>Bố cục Đối xứng</span></h3>
+                <p>Nửa trái và nửa phải của khung hình giống hệt nhau như soi gương. Tạo vẻ đẹp kiến trúc hoàn mỹ, trang trọng hoặc cảm giác đóng khung cứng nhắc.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-road"></i><span>[ Ảnh Leading Lines ]</span>
+                <img src="leadinglines.jpg" alt="Leading Lines">
+            </div>
+            <div class="card-info">
+                <h3>Leading Lines <span>Đường dẫn</span></h3>
+                <p>Sử dụng các đường nét có sẵn (con đường, hành lang, vách tường) để hội tụ ánh mắt khán giả phi thẳng vào chủ thể.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-minimize"></i><span>[ Ảnh Negative Space ]</span>
+                <img src="negativespace.jpg" alt="Negative Space">
+            </div>
+            <div class="card-info">
+                <h3>Negative Space <span>Khoảng trống âm ảnh</span></h3>
+                <p>Cố tình chừa một khoảng trống rỗng khổng lồ xung quanh nhân vật. Hiệu quả tuyệt đối để lột tả sự cô đơn, lạc lõng hoặc bị đè nén.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-layer-group"></i><span>[ Ảnh Foreground Framing ]</span>
+                <img src="frameinframe.png" alt="Foreground Framing">
+            </div>
+            <div class="card-info">
+                <h3>Foreground Framing <span>Đóng khung tiền cảnh</span></h3>
+                <p>Sử dụng một vật thể mờ ở gần camera (cửa sổ, cành cây, vai người) để bao bọc chủ thể chính, tạo chiều sâu 3D (Depth) cực kỳ rõ rệt.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PHẦN 4 & 5: TIÊU CỰ & CHIỀU SÂU
+    =========================================== -->
+    <hr class="separator-line">
+    <div class="section-header">
+        <h2>IV. ỐNG KÍNH & KHẨU ĐỘ (LENS & DOF)</h2>
+        <p>Việc chọn đúng loại ống kính (Focal Length) và độ xóa phông (Depth of Field) tạo ra không gian thị giác của bộ phim.</p>
+    </div>
+
+    <div class="compare-grid">
+        <div class="compare-box">
+            <h4>10mm - 16mm (Góc siêu rộng)</h4>
+            <div class="image-placeholder">
+                <span>[ Ảnh Ultra-wide 10-16mm ]</span>
+                <img src="10mm-16mm.jpg" alt="Ultra Wide Lens">
+            </div>
+            <p><strong>Ultra-wide:</strong> Làm cong viền hình nhẹ, ôm trọn không gian bao la. Tạo cảm giác không gian bị kéo sâu, rất kịch tính hoặc dị biệt.</p>
+        </div>
+        <div class="compare-box">
+            <h4>20mm - 35mm (Góc rộng chuẩn)</h4>
+            <div class="image-placeholder">
+                <span>[ Ảnh Wide 20-35mm ]</span>
+                <img src="20-35mm.jpg" alt="Wide Lens">
+            </div>
+            <p><strong>Wide Lens:</strong> Tiêu chuẩn điện ảnh. Rất tuyệt vời để kể chuyện vì lấy được cả biểu cảm nhân vật lẫn không gian bối cảnh rõ nét phía sau.</p>
+        </div>
+        <div class="compare-box">
+            <h4>50mm - 85mm (Tiêu chuẩn/Chân dung)</h4>
+            <div class="image-placeholder">
+                <span>[ Ảnh Normal 50-85mm ]</span>
+                <img src="50-85mm.jpg" alt="Normal Lens">
+            </div>
+            <p><strong>Normal to Portrait:</strong> Tương đương mắt người nhìn. Khung hình không bị méo, chuyên dùng để tả thực và quay đặc tả chân dung cực đẹp.</p>
+        </div>
+        <div class="compare-box">
+            <h4>100mm - 200mm (Telephoto/Chụp xa)</h4>
+            <div class="image-placeholder">
+                <span>[ Ảnh Tele 100-200mm ]</span>
+                <img src="100-120mm.jpg" alt="Telephoto Lens">
+            </div>
+            <p><strong>Telephoto:</strong> Hiệu ứng "nén không gian". Kéo núi non hậu cảnh sát rạt vào nhân vật. Xóa phông cực gắt, tách lập chủ thể hoàn toàn.</p>
+        </div>
+    </div>
+
+    <div class="compare-grid" style="margin-top: 40px;">
+        <div class="compare-box">
+            <h4>f/1.2 - f/2.0 (Khẩu Lớn)</h4>
+            <div class="image-placeholder">
+                <span>[ Ảnh Xóa Phông f/1.2 ]</span>
+                <img src="f1.2-2.jpg" alt="Shallow DoF">
+            </div>
+            <p><strong>Shallow DoF (Độ sâu trường mỏng):</strong> Nhân vật nét căng, phía sau nhòe hoàn toàn (Bokeh). Dùng để giấu bối cảnh xấu và ép nhìn vào cảm xúc.</p>
+        </div>
+        <div class="compare-box">
+            <h4>f/8 - f/11 (Khẩu Trung)</h4>
+            <div class="image-placeholder">
+                <span>[ Ảnh Đường Phố f/8 ]</span>
+                <img src="f8-11.jpg" alt="Medium DoF">
+            </div>
+            <p><strong>Nét vừa đủ:</strong> Lựa chọn an toàn. Thấy rõ nét mặt nhân vật và vẫn nhận diện được môi trường xung quanh họ đang hoạt động (như cảnh đường phố).</p>
+        </div>
+        <div class="compare-box">
+            <h4>f/22 (Khẩu Nhỏ)</h4>
+            <div class="image-placeholder">
+                <span>[ Ảnh Phong Cảnh f/22 ]</span>
+                <img src="f22.jpg" alt="Deep DoF">
+            </div>
+            <p><strong>Deep DoF (Độ sâu trường dày):</strong> Nét căng từ cành cây gần nhất đến ngọn núi xa nhất. Bắt buộc sử dụng khi quay các cảnh đại cảnh phong cảnh thiên nhiên.</p>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PHẦN 6: ÁNH SÁNG (LIGHTING)
+    =========================================== -->
+    <hr class="separator-line">
+    <div class="section-header">
+        <h2>V. NGHỆ THUẬT ÁNH SÁNG (LIGHTING)</h2>
+        <p>Ánh sáng tạo ra Mood. Cùng một nhân vật, thay đổi hướng sáng là thay đổi toàn bộ thông điệp truyền tải.</p>
+    </div>
+
+    <div class="gallery-grid">
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-clapperboard"></i><span>[ Ảnh Film Lighting ]</span>
+                <img src="filmlighting.jpeg" alt="Film Lighting">
+            </div>
+            <div class="card-info">
+                <h3>Film Lighting <span>Chuẩn điện ảnh</span></h3>
+                <p>Đánh sáng nhiều lớp, luôn có ven tóc (backlight) để tách chủ thể khỏi nền, tương phản vùng sáng tối trên khuôn mặt mượt mà.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-leaf"></i><span>[ Ảnh Natural Lighting ]</span>
+                <img src="naturallighting.jpg" alt="Natural Lighting">
+            </div>
+            <div class="card-info">
+                <h3>Natural Lighting <span>Tự nhiên</span></h3>
+                <p>Mô phỏng ánh sáng tự nhiên (cửa sổ, mặt trời hắt vào). Mang lại cảm giác chân thật, đời thường, có phần thô ráp và gần gũi.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-mask"></i><span>[ Ảnh Dramatic Lighting ]</span>
+                <img src="Dramatic-lowkeylighting.jpg" alt="Dramatic Lighting">
+            </div>
+            <div class="card-info">
+                <h3>Dramatic / Low-Key <span>Kịch tính</span></h3>
+                <p>Tương phản cực gắt giữa mảng tối đen đặc và mảng sáng rực rỡ (Chiaroscuro). Gợi sự căng thẳng, nguy hiểm, bí ẩn và u ám.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-cloud-moon"></i><span>[ Ảnh Silhouette ]</span>
+                <img src="silhouettelighting.jpg" alt="Silhouette Lighting">
+            </div>
+            <div class="card-info">
+                <h3>Silhouette Lighting <span>Đổ bóng đen</span></h3>
+                <p>Đánh sáng ngược cực mạnh từ sau lưng, biến nhân vật thành một cái bóng đen kịt (ngược sáng toàn phần). Cực kỳ nghệ thuật và ẩn dụ.</p>
+            </div>
+        </div>
+        <div class="card-item">
+            <div class="image-placeholder">
+                <i class="fa-regular fa-sun"></i><span>[ Ảnh Golden Hour ]</span>
+                <img src="goldenhourlighting.webp" alt="Golden Hour">
+            </div>
+            <div class="card-info">
+                <h3>Golden Hour <span>Giờ vàng</span></h3>
+                <p>Ánh nắng hoàng hôn/bình minh màu cam rực rỡ chiếu xiên ngang, đổ bóng dài. Tạo cảm giác lãng mạn, hoài niệm, bình yên vô cực.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Các Loại Ánh Sáng Mở Rộng -->
+    <div class="tag-cloud-section">
+        <h4><i class="fa-solid fa-lightbulb"></i> Các Keyword Ánh Sáng Mở Rộng</h4>
+        <div class="tag-cloud">
+            <div class="tag">Split Lighting (Sáng chia nửa mặt)</div>
+            <div class="tag">Foggy Lighting (Sáng mờ ảo qua sương mù)</div>
+            <div class="tag">Rembrandt Lighting (Tạo tam giác sáng dưới mắt)</div>
+            <div class="tag">Edge / Rim Lighting (Chỉ sáng một viền mỏng quanh chủ thể)</div>
+            <div class="tag">Underlighting (Ánh sáng hất ngược từ dưới cằm lên)</div>
+            <div class="tag">Sunbeam Lighting (Tia sáng nắng rọi qua kẽ lá/cửa sổ)</div>
+            <div class="tag">Hard Key Light (Nguồn sáng gắt, tạo bóng sắc nét)</div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
